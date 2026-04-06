@@ -1,0 +1,34 @@
+name: Exchange Rate Tracker
+
+on:
+  schedule:
+    - [cite_start]cron: '0 0 * * *' # 每天國際標準時間 00:00 (台灣早上 8:00) 執行 [cite: 145, 148]
+  [cite_start]workflow_dispatch:      # 允許手動觸發 [cite: 152]
+
+jobs:
+  run-crawler:
+    [cite_start]runs-on: ubuntu-latest # 使用 Ubuntu 最新版本 [cite: 158, 161]
+    steps:
+      - name: Checkout repository
+        [cite_start]uses: actions/checkout@v4 # 檢查並拉取程式碼 [cite: 168, 169]
+
+      - name: Set up Python
+        [cite_start]uses: actions/setup-python@v5 # 安裝 Python 環境 [cite: 174, 177]
+        with:
+          [cite_start]python-version: '3.10' # 使用 Python 3.10 版本 [cite: 179]
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests # 安裝爬蟲所需的 requests 套件 [cite: 189, 190]
+
+      - name: Run Exchange Script
+        [cite_start]run: python api.py # 執行你的匯率抓取程式 [cite: 193, 199]
+
+      - name: Upload results
+        [cite_start]uses: actions/upload-artifact@v4 # 將產出的資料上傳為 Artifact [cite: 210, 211]
+        with:
+          name: daily-exchange-rates
+          path: |
+            exchange.json
+            exchange.csv
